@@ -1,0 +1,53 @@
+.game-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.game-alert-box {
+  border: 4px solid #fff;
+  padding: 30px;
+  text-align: center;
+  border-radius: 15px;
+  width: 300px;
+  font-family: 'Press Start 2P', cursive; /* Fuente retro */
+  color: #fff;
+  box-shadow: 0 0 20px #fff;
+}
+
+.game-alert-box.win {
+  background: linear-gradient(145deg, #067843, #02331b);
+}
+
+.game-alert-box.lose {
+  background: linear-gradient(145deg, #4a0316, #880022);
+}
+
+.game-alert-box button {
+  border: none;
+  margin-top: 20px;
+  background: linear-gradient(145deg, #181818, #070008);
+  border: none;
+  color: #e0e0e0;
+  font-size: 12px;
+  padding: 18px 28px;
+  font-family: 'Press Start 2P', cursive;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 139, 139, 0.9);
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  z-index: 2;
+  overflow: hidden;
+  text-align: center;
+}
+
+.game-alert-box button:hover {
+  background-color: #444;
+}

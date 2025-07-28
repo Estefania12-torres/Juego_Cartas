@@ -1,0 +1,4 @@
+const TypeCards = { 
+    SPADES:"SPADES",RED_HEARTS:"RED_HEARTS",CLOVERS:"CLOVERS", DIAMONDS:"DIAMONDS", WHITE:"WHITE"
+}
+export default TypeCards;

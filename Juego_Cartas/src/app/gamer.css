@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f0f1c;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.question-input{
+  margin: 10px;
+  padding: 5px;
+  width: 550px;
+  height: 50px;
+  border: solid;
+  border-color: #d74ade;
+  border-radius: 5px;
+}
+
+.game-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  background: url('/assets/background/fondo2.jpg') center center / cover no-repeat fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.game-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.game-title {
+  font-size: 20px;
+  margin-bottom: 50px;
+  color: #008b8b;
+  text-shadow: 0 0 10px #a104a9;
+  text-align: center;
+}
+
+.game-title_number {
+  font-size: 20px; 
+  color: #000404;
+  text-shadow: 0 0 10px #008b8b;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.game-button {
+  position: relative;
+  background: linear-gradient(145deg, #a104a9, #4f0262);
+  border: none;
+  color: #e0e0e0;
+  font-size: 12px;
+  padding: 18px 28px;
+  font-family: 'Press Start 2P', cursive;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 139, 139, 0.9);
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  z-index: 2;
+  overflow: hidden;
+  text-align: center;
+}
+
+
+
+/* Efecto de chispa */
+.game-button::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+.game-button:hover::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 1;
+}
+
+.game-title, .button-group, .game-button {
+  z-index: 2;
+}
+
+.music-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  padding: 10px 20px;
+  background-color: rgba(0, 139, 139, 0.8);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 139, 139, 0.6);
+  transition: all 0.3s ease;
+}
+
+.music-button1 {
+ 
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  padding: 10px 20px;
+  background-color: rgba(0, 139, 139, 0.8);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 139, 139, 0.6);
+  transition: all 0.3s ease;
+}
+
+.music-button:hover {
+  background-color: rgba(0, 139, 139, 1);
+  box-shadow: 0 0 20px rgba(0, 139, 139, 1);
+}

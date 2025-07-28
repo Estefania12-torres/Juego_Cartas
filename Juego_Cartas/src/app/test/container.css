@@ -1,0 +1,22 @@
+:root {
+  --container-width: 500px;
+  --container-height: 700px;
+}
+
+.container {
+  margin: 20px auto;
+  width: var(--container-width);
+  height: var(--container-height);
+  border: 2px solid rgb(5, 5, 5);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+
+  grid-gap: 20px;
+}
+
+.box {
+  border: 3px solid rgb(255, 132, 75);
+  display: inline-block;
+  background-color: rgb(7, 7, 7);
+}
