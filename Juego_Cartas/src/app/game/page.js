@@ -1,120 +1,168 @@
+// Indicar que este es un componente del lado del cliente
 "use client";
-import { styled } from "@stitches/react";
-import Deck from "../controller/Deck";
-import { Card } from "react-bootstrap";
-import { useEffect, useRef, useState } from "react";
-import CDeckShowCardsHide from "../components/CDeckShowCardsHide";
-import "../gamer.css";
-import "../style.css";
-import { AnimatePresence, motion } from "framer-motion";
-import GameAlert from "../components/GameAlert";
 
+// Importaciones de bibliotecas y componentes
+import { styled } from "@stitches/react";          // Para estilos
+import Deck from "../controller/Deck";             // Controlador del mazo
+import { Card } from "react-bootstrap";            // Componente Card de Bootstrap
+import { useEffect, useRef, useState } from "react";  // Hooks de React
+import CDeckShowCardsHide from "../components/CDeckShowCardsHide";  // Componente para mostrar cartas
+import "../gamer.css";                            // Estilos del juego
+import "../style.css";                            // Estilos generales
+import { AnimatePresence, motion } from "framer-motion";  // Para animaciones
+import GameAlert from "../components/GameAlert";   // Componente de alerta del juego
+
+// Importaciones para animaciones de spring
 import {
-  useSprings,
-  animated,
-  to as interpolate,
-  useSpring,
-  a,
-  useTrail,
+  useSprings,    // Hook para múltiples animaciones spring
+  animated,      // Componente animado
+  to as interpolate,  // Función de interpolación
+  useSpring,     // Hook para una animación spring
+  a,             // Alias para animated
+  useTrail,      // Hook para animaciones en secuencia
 } from "@react-spring/web";
-import Baraja from "../components/CBarajado";
+import Baraja from "../components/CBarajado";      // Componente de barajado
 
+/**
+ * Genera un subconjunto de cartas del mazo principal
+ * @param {number} i - Índice inicial
+ * @param {number} j - Índice final
+ * @param {Array} decks - Mazo completo de cartas
+ * @returns {Array} Subconjunto de cartas seleccionadas
+ */
 function generate(i, j, decks) {
-  var aux = [];
-  var cont = 0;
+  var aux = [];      // Array auxiliar para almacenar las cartas seleccionadas
+  var cont = 0;      // Contador para el índice del array auxiliar
+  // Recorrer el rango especificado del mazo
   for (var i1 = i; i1 <= j; i1++) {
-    aux[cont] = decks[i1];
-    cont++;
+    aux[cont] = decks[i1];  // Copiar la carta al array auxiliar
+    cont++;                 // Incrementar el contador
   }
-  //var deck = new Deck();
-  //aux[cont] = deck.createNewCard();
-  return aux;
+  return aux;    // Devolver el subconjunto de cartas
 }
 
+/**
+ * Componente principal de la vista del juego
+ * Maneja la lógica y la interfaz del juego de cartas
+ */
 export default function Game_view() {
-  //loading
-  const [isLoading, setIsLoading] = useState(true);
-  //message
-  const [result, setResult] = useState(null); // 'win' | 'lose' | null
-  const audioRef = useRef(null);
-  const [muted, setMuted] = useState(false);
-  const [hasPlayed, setHasPlayed] = useState(false);
-  var [cardSelected, setCardSelected] = useState(null);
-  var [cont, setCont] = useState(1);
-  //loading
+  // Estados para la pantalla de carga
+  const [isLoading, setIsLoading] = useState(true);  // Controla la pantalla de carga inicial
+
+  // Estados para el resultado del juego y audio
+  const [result, setResult] = useState(null);        // Estado del juego: 'win' | 'lose' | null
+  const audioRef = useRef(null);                     // Referencia al elemento de audio
+  const [muted, setMuted] = useState(false);         // Estado del sonido (silenciado/no silenciado)
+  const [hasPlayed, setHasPlayed] = useState(false); // Control de reproducción inicial
+
+  // Estados para el manejo de cartas
+  var [cardSelected, setCardSelected] = useState(null); // Carta seleccionada actualmente
+  var [cont, setCont] = useState(1);                   // Contador general
+
+  /**
+   * Efecto para controlar la pantalla de carga
+   * Se ejecuta al montar el componente y muestra la pantalla de carga por 8.5 segundos
+   */
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 8500);
+    // Limpiar el temporizador al desmontar
     return () => clearTimeout(timer);
   }, []);
-  //audio
+
+  /**
+   * Efecto para manejar la reproducción del audio
+   * Intenta reproducir el audio automáticamente y maneja los clics para reproducción manual
+   */
   useEffect(() => {
+    // Función para intentar reproducir el audio
     const playAudio = () => {
       if (audioRef.current && !hasPlayed) {
-        audioRef.current.volume = 0.5;
+        audioRef.current.volume = 0.5;  // Establecer volumen al 50%
         audioRef.current
           .play()
           .then(() => {
-            setHasPlayed(true);
+            setHasPlayed(true);  // Marcar como reproducido si tiene éxito
           })
           .catch(() => {
-            // Navegador bloqueó autoplay
-            setHasPlayed(false);
+            setHasPlayed(false); // Mantener como no reproducido si falla
           });
       }
     };
 
+    // Intentar reproducir el audio inicialmente
     playAudio();
+    // Agregar listener para reproducir en clic del usuario
     window.addEventListener("click", playAudio);
+    // Limpiar el listener al desmontar
     return () => window.removeEventListener("click", playAudio);
   }, [hasPlayed]);
 
+  /**
+   * Función para alternar el estado de silencio del audio
+   */
   const toggleMute = () => {
     if (audioRef.current) {
-      audioRef.current.muted = !muted;
-      setMuted(!muted);
+      audioRef.current.muted = !muted;  // Cambiar estado de silencio
+      setMuted(!muted);                 // Actualizar estado en React
     }
   };
+
+  /**
+   * Manejador del botón de silencio
+   * Alterna el estado de silencio del audio
+   */
   const handleMuteToggle = () => {
     if (audioRef.current) {
-      audioRef.current.muted = !muted;
-      setMuted(!muted);
+      audioRef.current.muted = !muted;  // Cambiar estado de silencio
+      setMuted(!muted);                 // Actualizar estado en React
     }
   };
-  //cartas
-  const [c1, setC1] = useState([]);
-  const [c2, setC2] = useState([]);
-  const [c3, setC3] = useState([]);
-  const [c4, setC4] = useState([]);
-  const [c5, setC5] = useState([]);
-  const [c6, setC6] = useState([]);
-  const [c7, setC7] = useState([]);
-  const [c8, setC8] = useState([]);
-  const [c9, setC9] = useState([]);
-  const [c10, setC10] = useState([]);
-  const [c11, setC11] = useState([]);
-  const [c12, setC12] = useState([]);
-  const [c13, setC13] = useState([]);
 
+  // Estados para los grupos de cartas (del 1 al 13)
+  // Cada grupo representa un conjunto de cartas del mismo número
+  const [c1, setC1] = useState([]);     // Grupo de Ases
+  const [c2, setC2] = useState([]);     // Grupo de Dos
+  const [c3, setC3] = useState([]);     // Grupo de Tres
+  const [c4, setC4] = useState([]);     // Grupo de Cuatros
+  const [c5, setC5] = useState([]);     // Grupo de Cincos
+  const [c6, setC6] = useState([]);     // Grupo de Seises
+  const [c7, setC7] = useState([]);     // Grupo de Sietes
+  const [c8, setC8] = useState([]);     // Grupo de Ochos
+  const [c9, setC9] = useState([]);     // Grupo de Nueves
+  const [c10, setC10] = useState([]);   // Grupo de Dieces
+  const [c11, setC11] = useState([]);   // Grupo de Jotas
+  const [c12, setC12] = useState([]);   // Grupo de Reinas
+  const [c13, setC13] = useState([]);   // Grupo de Reyes
+
+  /**
+   * Efecto que inicializa el juego distribuyendo las cartas en grupos
+   * Se ejecuta una sola vez al montar el componente
+   */
   useEffect(() => {
+    // Crear una nueva baraja
     var deck = new Deck();
     var decks = deck.decks;
-    //console.log(decks);
-    setC1(generate(0, 3, decks));
-    setC2(generate(4, 7, decks));
-    setC3(generate(8, 11, decks));
-    setC4(generate(12, 15, decks));
-    setC5(generate(16, 19, decks));
-    setC6(generate(20, 23, decks));
-    setC7(generate(24, 27, decks));
-    setC8(generate(28, 31, decks));
-    setC9(generate(32, 35, decks));
-    setC10(generate(36, 39, decks));
-    setC11(generate(40, 43, decks));
-    setC12(generate(44, 47, decks));
+
+    // Distribuir las cartas en grupos de 4
+    setC1(generate(0, 3, decks));     // Grupo de Ases (1-4)
+    setC2(generate(4, 7, decks));     // Grupo de Doses (5-8)
+    setC3(generate(8, 11, decks));    // Grupo de Treses (9-12)
+    setC4(generate(12, 15, decks));   // Grupo de Cuatros (13-16)
+    setC5(generate(16, 19, decks));   // Grupo de Cincos (17-20)
+    setC6(generate(20, 23, decks));   // Grupo de Seises (21-24)
+    setC7(generate(24, 27, decks));   // Grupo de Sietes (25-28)
+    setC8(generate(28, 31, decks));   // Grupo de Ochos (29-32)
+    setC9(generate(32, 35, decks));   // Grupo de Nueves (33-36)
+    setC10(generate(36, 39, decks));  // Grupo de Dieces (37-40)
+    setC11(generate(40, 43, decks));  // Grupo de Jotas (41-44)
+    setC12(generate(44, 47, decks));  // Grupo de Reinas (45-48)
+
+    // Voltear y seleccionar la primera carta del grupo de reyes
     decks[48].estado = true;
     setCard(decks[48]);
+    
+    // Establecer el grupo de Reyes (49-52)
     setC13(generate(48, 51, decks));
-    //fijar la primera carta
   }, []);
 
   const AppContainer = styled("div", {
@@ -155,56 +203,80 @@ export default function Game_view() {
     border: "solid 2px #1a1a1a",
   });
   //******************** */
+  /**
+   * Obtiene la posición de la primera carta no volteada en un grupo
+   * @param {Array} c - Grupo de cartas a verificar
+   * @returns {number} Posición de la primera carta no volteada o -1 si no hay
+   */
   function getPost(c) {
     var cont = -1;
     for (var i = 1; i < c.length; i++) {
-      if (!c[i].estado) {
-        cont = i;
+      if (!c[i].estado) {  // Si la carta no está volteada
+        cont = i;          // Guardar su posición
         break;
       }
       return cont;
     }
   }
+
+  /**
+   * Verifica si se han completado las 4 cartas del mismo número
+   * @param {Array} c - Grupo de cartas a verificar
+   * @param {string} name - Número de carta a buscar
+   * @returns {boolean} True si hay 4 cartas volteadas del mismo número
+   */
   function verify(c, name) {
     var cont = 0;
+    // Contar cartas volteadas del número especificado
     for (var i = 0; i < c.length; i++) {
       if (c[i].estado && c[i].name == name) {
         cont++;
       }
     }
-
-    return cont == 4;
+    return cont == 4;  // Verificar si se completaron las 4 cartas
   }
+
+  /**
+   * Verifica si se han completado los 4 reyes
+   * @returns {boolean} True si se han completado los 4 reyes
+   */
   function verifyKing() {
     var cont = 0;
+    // Contar reyes volteados
     for (var i = 0; i < c13.length; i++) {
       if (c13[i].estado && c13[i].name == "13") {
         cont++;
       }
     }
-
-    return cont == 4;
+    return cont == 4;  // Verificar si se completaron los 4 reyes
   }
+  /**
+   * Maneja el clic en una carta
+   * @param {Object} origen - Carta origen que fue clicada
+   * @param {number} container - Número del contenedor donde se hizo clic (1-13)
+   */
   const handleClick = (origen, container) => {
+    // Verificar si se completaron los reyes
     if (verifyKing()) {
-      //alert("El rey se a completado");
+      // Si se completaron los reyes, verificar si se ganó el juego
       if (
-        verify(c1, "1") &&
-        verify(c2, "2") &&
-        verify(c3, "3") &&
-        verify(c4, "4") &&
-        verify(c5, "5") &&
-        verify(c6, "6") &&
-        verify(c7, "7") &&
-        verify(c8, "8") &&
-        verify(c9, "9") &&
-        verify(c10, "10") &&
-        verify(c11, "11") &&
-        verify(c12, "12")
+        // Verificar si se completaron todos los grupos de cartas
+        verify(c1, "1") &&   // Ases
+        verify(c2, "2") &&   // Doses
+        verify(c3, "3") &&   // Treses
+        verify(c4, "4") &&   // Cuatros
+        verify(c5, "5") &&   // Cincos
+        verify(c6, "6") &&   // Seises
+        verify(c7, "7") &&   // Sietes
+        verify(c8, "8") &&   // Ochos
+        verify(c9, "9") &&   // Nueves
+        verify(c10, "10") && // Dieces
+        verify(c11, "11") && // Jotas
+        verify(c12, "12")    // Reinas
       ) {
-        setResult("win");
+        setResult("win");    // Victoria si se completaron todos los grupos
       } else {
-        setResult("lose");
+        setResult("lose");   // Derrota si faltó completar algún grupo
       }
     } else {
       var deck_aux = [];
@@ -418,27 +490,32 @@ export default function Game_view() {
     }
   };
 
+  /**
+   * Agrega una carta al grupo correspondiente según su número
+   * @param {Card} card - Carta a agregar
+   */
   function addCard(card) {
-    //alert(card.name);
+    // Verificar si se completaron los reyes primero
     if (verifyKing()) {
-      //alert("El rey se a completado");
+      // Si los reyes están completos, verificar victoria
       if (
-        verify(c1, "1") &&
-        verify(c2, "2") &&
-        verify(c3, "3") &&
-        verify(c4, "4") &&
-        verify(c5, "5") &&
-        verify(c6, "6") &&
-        verify(c7, "7") &&
-        verify(c8, "8") &&
-        verify(c9, "9") &&
-        verify(c10, "10") &&
-        verify(c11, "11") &&
-        verify(c12, "12")
+        // Verificar si todos los grupos están completos
+        verify(c1, "1") &&   // Grupo de Ases
+        verify(c2, "2") &&   // Grupo de Doses
+        verify(c3, "3") &&   // Grupo de Treses
+        verify(c4, "4") &&   // Grupo de Cuatros
+        verify(c5, "5") &&   // Grupo de Cincos
+        verify(c6, "6") &&   // Grupo de Seises
+        verify(c7, "7") &&   // Grupo de Sietes
+        verify(c8, "8") &&   // Grupo de Ochos
+        verify(c9, "9") &&   // Grupo de Nueves
+        verify(c10, "10") && // Grupo de Dieces
+        verify(c11, "11") && // Grupo de Jotas
+        verify(c12, "12")    // Grupo de Reinas
       ) {
-        setResult("win");
+        setResult("win");    // Victoria si todo está completo
       } else {
-        setResult("lose");
+        setResult("lose");   // Derrota si falta algún grupo
       }
     } else {
       let number = card.name;
@@ -519,25 +596,33 @@ export default function Game_view() {
 
   //******************** */
 
+  /**
+   * Componente que renderiza una carta según su posición y estado
+   * @param {Object} props - Propiedades del componente
+   * @param {number} props.i - Índice de la carta en el grupo
+   * @param {Card} props.data - Datos de la carta
+   * @param {number} props.container - Número del contenedor al que pertenece
+   * @returns {JSX.Element} Elemento JSX que representa la carta
+   */
   function Condicion({ i, data, container }) {
-    if (i == 0) {
-      if (!data.estado) {
+    if (i == 0) {  // Si es la primera carta del grupo
+      if (!data.estado) {  // Si la carta no está volteada
         return (
           <div className={"superpuesto" + (i + 1)}>
             <CDeckShowCardsHide card={data} />
           </div>
         );
-      } else {
+      } else {  // Si la carta está volteada
         return (
           <div
             className={"superpuesto" + (i + 1)}
-            onClick={() => handleClick(data, container)}
+            onClick={() => handleClick(data, container)}  // Permitir clic
           >
             <CDeckShowCardsHide card={data} />
           </div>
         );
       }
-    } else {
+    } else {  // Para el resto de cartas del grupo
       return (
         <div className={"superpuesto" + (i + 1)}>
           <CDeckShowCardsHide card={data} />
@@ -546,8 +631,12 @@ export default function Game_view() {
     }
   }
 
+  /**
+   * Establece la carta seleccionada actualmente
+   * @param {Card} card - Carta a seleccionar
+   */
   function setCard(card) {
-    setCardSelected(card);
+    setCardSelected(card);  // Actualizar el estado de la carta seleccionada
   }
 
   return (

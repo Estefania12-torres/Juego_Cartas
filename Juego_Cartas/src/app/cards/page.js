@@ -5,6 +5,10 @@ import TypeCards from "../models/TypeCards";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import "../gamer.css";
+/**
+ * Página que muestra la vista de todas las cartas organizadas por tipo
+ * @component Cards_view
+ */
 export default function Cards_view() {
   const audioRef = useRef(null);
     const [muted, setMuted] = useState(false);

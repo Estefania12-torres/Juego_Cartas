@@ -1,25 +1,42 @@
+// Importar las dependencias necesarias de React
 import React, { useRef, useState } from "react";
+// Importar componentes y hooks de react-spring para animaciones
 import {
-  useSprings,
-  animated,
-  to as interpolate,
-  useSpring,
-  a,
-  useTrail,
+  useSprings,  // Hook para múltiples animaciones
+  animated,    // Componente que puede ser animado
+  to as interpolate,  // Función para interpolar valores
+  useSpring,   // Hook para una sola animación
+  a,           // Alias para animated
+  useTrail,    // Hook para animaciones en secuencia
 } from "@react-spring/web";
+// Importar hook para gestos táctiles y de ratón
 import { useDrag } from "react-use-gesture";
+// Importar utilidad de estilos
 import { styled } from "@stitches/react";
+// Importar estilos CSS
 import "../style.css";
 
+/**
+ * Extrae la ruta de la imagen de la carta según su estado
+ * @param {Object} data1 - Datos de la carta
+ * @returns {string} Ruta de la imagen a mostrar
+ */
 function extractImagen(data1) {
- 
+  // Si la carta está volteada (estado true), mostrar la imagen frontal
   if (data1.estado) {
     return "/assets/images/" + data1.imagen;
   } else {
+    // Si la carta está boca abajo, mostrar el reverso
     return "/assets/images/" + data1.imagen_desactivo;
   }
 }
 
+/**
+ * Componente que muestra una carta con animación de volteo
+ * @component CDeckShowCardsHide
+ * @param {Object} props - Propiedades del componente
+ * @param {Card} props.card - Carta a mostrar
+ */
 export default function CDeckShowCardsHide({ card }) {
   const [flipped, set] = useState(false);
   const { transform, opacity } = useSpring({

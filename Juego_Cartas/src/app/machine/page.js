@@ -1,4 +1,13 @@
 "use client";
+/**
+ * @fileoverview Juego de cartas automatizado donde el destino juega por el usuario
+ * Implementa la lógica del juego, manejo de estado, y la interfaz de usuario
+ * @requires @stitches/react
+ * @requires react-bootstrap
+ * @requires framer-motion
+ * @requires @react-spring/web
+ */
+
 import { styled } from "@stitches/react";
 import Deck from "../controller/Deck";
 import { Card } from "react-bootstrap";
@@ -20,6 +29,13 @@ import {
 import { SourceTextModule } from "vm";
 import Baraja from "../components/CBarajado";
 
+/**
+ * Genera un subconjunto de cartas del mazo principal
+ * @param {number} i - Índice inicial del rango de cartas
+ * @param {number} j - Índice final del rango de cartas
+ * @param {Array} decks - Mazo completo de cartas
+ * @returns {Array} Subconjunto de cartas seleccionadas
+ */
 function generate(i, j, decks) {
   var aux = [];
   var cont = 0;
@@ -32,20 +48,40 @@ function generate(i, j, decks) {
   return aux;
 }
 
+/**
+ * Componente principal del juego de cartas automatizado
+ * Gestiona el estado del juego, la interfaz de usuario y la lógica de juego automático
+ * @returns {JSX.Element} Interfaz del juego
+ */
 export default function Game_view() {
-  //loading
+  // Estados para la pantalla de carga
   const [isLoading, setIsLoading] = useState(true);
   const [isLoading1, setIsLoading1] = useState(true);
-  //message
-  const [result, setResult] = useState(null); // 'win' | 'lose' | null
+  
+  // Estados para mensajes y resultados del juego
+  /** @type {[string|null, function]} Estado del resultado del juego ('win'|'lose'|null) */
+  const [result, setResult] = useState(null);
+  
+  // Referencias y estados para el manejo de audio
+  /** @type {React.RefObject} Referencia al elemento de audio */
   const audioRef = useRef(null);
+  /** @type {[boolean, function]} Estado del sonido (silenciado/no silenciado) */
   const [muted, setMuted] = useState(false);
+  /** @type {[boolean, function]} Estado de reproducción inicial */
   const [hasPlayed, setHasPlayed] = useState(false);
+  
+  // Estados para el manejo de cartas
+  /** @type {[object|null, function]} Carta actualmente seleccionada */
   var [cardSelected, setCardSelected] = useState(null);
+  /** @type {[number, function]} Contador general del juego */
   var [cont, setCont] = useState(1);
-  //maquina
-  const activateFuncs = useRef([]); // Lista de funciones activas
+  
+  // Estados para el manejo de la máquina (jugador automático)
+  /** @type {React.RefObject} Lista de funciones activas de la máquina */
+  const activateFuncs = useRef([]);
+  /** @type {[number, function]} Contador de acciones de la máquina */
   const [contador, setContador] = useState(0);
+  /** @type {[boolean, function]} Estado de visualización de condiciones */
   const [mostrarCondiciones, setMostrarCondiciones] = useState(true);
   //loading
   useEffect(() => {
@@ -163,6 +199,11 @@ export default function Game_view() {
     border: "solid 2px #1a1a1a",
   });
   //******************** */
+  /**
+   * Obtiene la posición de la primera carta no volteada en un conjunto
+   * @param {Array} c - Conjunto de cartas a verificar
+   * @returns {number} Posición de la primera carta no volteada (-1 si no hay)
+   */
   function getPost(c) {
     var cont = -1;
     for (var i = 1; i < c.length; i++) {
@@ -173,6 +214,13 @@ export default function Game_view() {
       return cont;
     }
   }
+
+  /**
+   * Verifica si hay exactamente 4 cartas del mismo número en un conjunto
+   * @param {Array} c - Conjunto de cartas a verificar
+   * @param {string} name - Número de carta a buscar
+   * @returns {boolean} true si hay exactamente 4 cartas del número especificado
+   */
   function verify(c, name) {
     var cont = 0;
     for (var i = 0; i < c.length; i++) {
@@ -184,6 +232,12 @@ export default function Game_view() {
     return cont == 4;
   }
 
+  /**
+   * Verifica si hay 3 o 4 cartas del mismo número sin otras cartas
+   * @param {Array} c - Conjunto de cartas a verificar
+   * @param {string} name - Número de carta a buscar
+   * @returns {boolean} true si hay 3 o 4 cartas del número especificado y ninguna otra
+   */
   function verifyWith3(c, name) {
     var cont = 0;
     var other = 0;
@@ -198,6 +252,10 @@ export default function Game_view() {
     return (cont == 3 || cont == 4) && other == 0;
   }
 
+  /**
+   * Verifica si se han completado los cuatro reyes (cartas número 13)
+   * @returns {boolean} true si se han completado los cuatro reyes
+   */
   function verifyKing() {
     var cont = 0;
     for (var i = 0; i < c13.length; i++) {
@@ -208,9 +266,15 @@ export default function Game_view() {
 
     return cont == 4;
   }
+  /**
+   * Maneja el click en un contenedor de cartas
+   * Gestiona la lógica de movimiento de cartas y verifica las condiciones de victoria
+   * @param {Object} origen - Carta de origen del movimiento
+   * @param {number} container - Número del contenedor donde se realizó el click
+   */
   const handleClick = (origen, container) => {
     if (verifyKing()) {
-      //alert("El rey se a completado");
+      // Verifica si se completaron los reyes
       if (
         verify(c1, "1") &&
         verify(c2, "2") &&
@@ -454,10 +518,16 @@ export default function Game_view() {
     }
   };
 
+  /**
+   * Añade una carta a su contenedor correspondiente según su número
+   * También verifica las condiciones de victoria después de añadir la carta
+   * @param {Object} card - Carta a añadir
+   * @param {string} card.name - Número de la carta
+   * @param {boolean} card.estado - Estado de la carta (volteada/no volteada)
+   */
   function addCard(card) {
-    //alert(card.name);
     if (verifyKing()) {
-      //alert("El rey se a completado");
+      // Verifica si se han completado los reyes y todas las demás series
       if (
         verify(c1, "1") &&
         verify(c2, "2") &&
@@ -609,6 +679,14 @@ export default function Game_view() {
         return verifyWith3(c13, "13");
     }
   }
+  /**
+   * Componente que renderiza una carta según su estado y posición
+   * @param {Object} props - Propiedades del componente
+   * @param {number} props.i - Índice de la carta en su contenedor
+   * @param {Object} props.data - Datos de la carta
+   * @param {number} props.container - Número del contenedor al que pertenece
+   * @returns {JSX.Element} Carta renderizada según su estado
+   */
   function Condicion({ i, data, container }) {
     if (i == 0) {
       if (!data.estado) {
@@ -671,18 +749,20 @@ export default function Game_view() {
     setCardSelected(card);
   }
 
-  //maquina
-  // Registrar función
+  // Funciones de la máquina (jugador automático)
+  /**
+   * Registra una función para el jugador automático
+   * @param {Function} func - Función a registrar para la automatización
+   */
   const registerActivate = (func) => {
-    //console.log("Se ha registrado");
-    //if (!activateFuncs.current.includes(func)) {
     activateFuncs.current.push(func);
-    // }
   };
 
-  // Eliminar función si el componente se desmonta
+  /**
+   * Elimina una función registrada cuando el componente se desmonta
+   * @param {Function} func - Función a eliminar del registro
+   */
   const unregisterActivate = (func) => {
-    // console.log("Se ha desmontado");
     activateFuncs.current = activateFuncs.current.filter((f) => f !== func);
   };
 

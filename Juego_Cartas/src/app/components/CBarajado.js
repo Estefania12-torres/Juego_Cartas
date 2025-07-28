@@ -1,26 +1,36 @@
-"use client";
+"use client"; // Directiva para indicar que es un componente del lado del cliente
+// Ruta de la imagen del reverso de la carta
 ///assets/images/tapa.jpg
 
-
+// Importaciones necesarias de React y Framer Motion
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/**
+ * Componente que representa una carta individual con animación
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.id - Identificador único de la carta
+ * @param {Object} props.animatePosition - Posición inicial y final para la animación
+ * @param {string} props.image - Ruta de la imagen de la carta
+ * @param {string} props.position - Posición de la carta (left, right, center)
+ */
 function Carta({ id, animatePosition, image, position }) {
+    // Estilos base para cada carta
   const baseStyle = {
-    width: 60,
-    height: 90,
-    borderRadius: 6,
-    backgroundColor: "#a104a9",
+    width: 60,          // Ancho de la carta
+    height: 90,         // Alto de la carta
+    borderRadius: 6,    // Bordes redondeados
+    backgroundColor: "#a104a9",  // Color de fondo morado
     
-    border: "1px solid #ccc",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    cursor: "default",
-    userSelect: "none",
-    fontWeight: "bold",
-    fontSize: 18,
+    border: "1px solid #ccc",    // Borde gris claro
+    display: "flex",             // Flexbox para centrar contenido
+    justifyContent: "center",    // Centrar horizontalmente
+    alignItems: "center",        // Centrar verticalmente
+    position: "absolute",        // Posicionamiento absoluto para animación
+    cursor: "default",           // Cursor por defecto
+    userSelect: "none",          // Prevenir selección de texto
+    fontWeight: "bold",          // Texto en negrita
+    fontSize: 18,                // Tamaño de fuente
   };
 
   return (
@@ -47,26 +57,44 @@ function Carta({ id, animatePosition, image, position }) {
   );
 }
 
+/**
+ * Componente principal que maneja la animación de barajado de cartas
+ * Muestra dos mazos laterales que se van moviendo al centro
+ */
 export default function Baraja() {
-  // Imagen que usaremos para las cartas
-  const image = "/assets/images/tapa.jpg"; // Reemplaza con tu URL de imagen
+  // Imagen del reverso que se usará para todas las cartas
+  const image = "/assets/images/tapa.jpg";
 
-  // Definimos la cantidad de cartas
-  const totalLeft = 4;
-  const totalRight = 4;
+  // Configuración inicial de la cantidad de cartas en cada lado
+  const totalLeft = 4;   // Número de cartas en el mazo izquierdo
+  const totalRight = 4;  // Número de cartas en el mazo derecho
 
+  // Estado para las cartas del mazo izquierdo
   const [leftCards, setLeftCards] = useState(
+    // Crear un array con identificadores únicos para cada carta (L1, L2, etc.)
     Array.from({ length: totalLeft }, (_, i) => `L${i + 1}`)
   );
+  
+  // Estado para las cartas del mazo derecho
   const [rightCards, setRightCards] = useState(
+    // Crear un array con identificadores únicos para cada carta (R1, R2, etc.)
     Array.from({ length: totalRight }, (_, i) => `R${i + 1}`)
   );
+  
+  // Estado para las cartas que se van moviendo al centro
   const [centerCards, setCenterCards] = useState([]);
-  const [turnLeft, setTurnLeft] = useState(true); // Controla si tomamos de la izquierda o derecha
+  
+  // Estado para alternar entre tomar cartas de la izquierda o derecha
+  const [turnLeft, setTurnLeft] = useState(true);
 
+  /**
+   * Efecto que maneja la animación automática de las cartas
+   * Se ejecuta cada segundo y mueve una carta alternadamente de izquierda y derecha al centro
+   */
   useEffect(() => {
-    // Cada 1 segundo mover una carta alternada de izquierda y derecha al centro
+    // Configurar un intervalo para mover las cartas cada segundo
     const interval = setInterval(() => {
+      // Si es el turno de la izquierda y aún hay cartas en ese mazo
       if (turnLeft && leftCards.length > 0) {
         // Mover carta del left al center
         setLeftCards((prev) => {
@@ -123,30 +151,35 @@ export default function Baraja() {
     return () => clearInterval(interval);
   }, [leftCards, rightCards, turnLeft]);
 
-  return (
+  /**
+   * Renderiza el componente de barajado
+   * @returns {JSX.Element} Elemento JSX con la animación de barajado
+   */
+return (
+    // Contenedor principal con fondo personalizado
     <div
       style={{
-        backgroundImage: `url('/assets/background/fondo2.jpg')`,
-        position: "relative",
-        width: 700, // Reducimos el ancho para que las cartas estén más cerca
-        height: 200,
-        margin: "40px auto",
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        overflow: "visible",
-        userSelect: "none",
+        backgroundImage: `url('/assets/background/fondo2.jpg')`, // Imagen de fondo
+        position: "relative",    // Posicionamiento relativo para los mazos
+        width: 700,             // Ancho del área de juego
+        height: 200,            // Alto del área de juego
+        margin: "40px auto",    // Centrar en la página
+        border: "1px solid #ddd", // Borde sutil
+        borderRadius: 8,        // Bordes redondeados
+        overflow: "visible",    // Permitir que las cartas sobresalgan
+        userSelect: "none",     // Prevenir selección de texto
       }}
     >
-      {/* Mazos izquierdo */}
+      {/* Contenedor del mazo izquierdo */}
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "30px", // Reducimos el espacio en la izquierda
-          transform: "translateY(-50%)",
-          width: 60,
-          height: 90,
-          pointerEvents: "none",
+          position: "absolute",         // Posicionamiento absoluto dentro del contenedor
+          top: "50%",                  // Centrar verticalmente
+          left: "30px",                // Posición desde el borde izquierdo
+          transform: "translateY(-50%)", // Ajuste fino del centrado vertical
+          width: 60,                   // Ancho de las cartas
+          height: 90,                  // Alto de las cartas
+          pointerEvents: "none",       // Deshabilitar interacción con el mouse
         }}
       >
         <AnimatePresence>
@@ -162,16 +195,16 @@ export default function Baraja() {
         </AnimatePresence>
       </div>
 
-      {/* Mazos derecho */}
+      {/* Contenedor del mazo derecho */}
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          right: "30px", // Reducimos el espacio en la derecha
-          transform: "translateY(-50%)",
-          width: 60,
-          height: 90,
-          pointerEvents: "none",
+          position: "absolute",         // Posicionamiento absoluto dentro del contenedor
+          top: "50%",                  // Centrar verticalmente
+          right: "30px",               // Posición desde el borde derecho
+          transform: "translateY(-50%)", // Ajuste fino del centrado vertical
+          width: 60,                   // Ancho de las cartas
+          height: 90,                  // Alto de las cartas
+          pointerEvents: "none",       // Deshabilitar interacción con el mouse
         }}
       >
         <AnimatePresence>
@@ -187,16 +220,16 @@ export default function Baraja() {
         </AnimatePresence>
       </div>
 
-      {/* Mazo central */}
+      {/* Contenedor del mazo central donde se acumulan las cartas */}
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 60,
-          height: 90,
-          pointerEvents: "none",
+          position: "absolute",         // Posicionamiento absoluto dentro del contenedor
+          top: "50%",                  // Centrar verticalmente
+          left: "50%",                 // Centrar horizontalmente
+          transform: "translate(-50%, -50%)", // Ajuste fino del centrado en ambos ejes
+          width: 60,                   // Ancho de las cartas
+          height: 90,                  // Alto de las cartas
+          pointerEvents: "none",       // Deshabilitar interacción con el mouse
         }}
       >
         <AnimatePresence>
