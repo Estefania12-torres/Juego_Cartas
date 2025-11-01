@@ -23,6 +23,7 @@ function Carta({ id, animatePosition, image, position }) {
 
   return (
     <motion.div
+      className="absolute"
       style={baseStyle}
       initial={{
         opacity: 0,
