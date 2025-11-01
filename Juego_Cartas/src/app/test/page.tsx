@@ -19,8 +19,6 @@ function Carta({ id, animatePosition, image, position }) {
     userSelect: "none",
     fontWeight: "bold",
     fontSize: 18,
-    position: "absolute", 
-
   };
 
   return (
