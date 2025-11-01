@@ -24,7 +24,7 @@ jobs:
           node-version: '22.x'
 
       - name: npm install, build, and test
-        working-directory: src 
+        working-directory: Juego_Cartas 
         run: |
           npm install
           npm run build --if-present
@@ -52,9 +52,10 @@ jobs:
         with:
           app-name: 'juegocartas'
           slot-name: 'Production'
-          package: src
+          package: Juego_Cartas 
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C74FEFAF2E7344339868923081A80512 }}
+
 
 
 
