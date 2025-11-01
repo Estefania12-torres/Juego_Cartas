@@ -19,11 +19,11 @@ function Carta({ id, animatePosition, image, position }) {
     userSelect: "none",
     fontWeight: "bold",
     fontSize: 18,
-  }; as React.CSSProperties;
+  }; 
 
   return (
     <motion.div
-      style={baseStyle}
+      style={baseStyle as any}
       initial={{
         opacity: 0,
         scale: 0.5,
