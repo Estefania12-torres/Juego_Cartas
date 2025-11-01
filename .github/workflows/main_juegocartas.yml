@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./Juego_Cartas
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,6 +51,7 @@ jobs:
         with:
           app-name: 'juegocartas'
           slot-name: 'Production'
-          package: Juego_Cartas/package.json
+          package: .
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C74FEFAF2E7344339868923081A80512 }}
+
