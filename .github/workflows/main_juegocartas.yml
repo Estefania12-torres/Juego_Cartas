@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install, build
+      - name: npm install, build, and test
         working-directory: Juego_Cartas 
         run: |
           npm install
@@ -55,6 +55,7 @@ jobs:
           package: Juego_Cartas 
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C74FEFAF2E7344339868923081A80512 }}
+
 
 
 
