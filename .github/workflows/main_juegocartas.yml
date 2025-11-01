@@ -51,5 +51,6 @@ jobs:
         with:
           app-name: 'juegocartas'
           slot-name: 'Production'
-          package: .
+          package: Juego_Cartas/package.json
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C74FEFAF2E7344339868923081A80512 }}
