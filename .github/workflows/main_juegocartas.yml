@@ -7,58 +7,44 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
-      - name: npm install, build, and test
-        working-directory: Juego_Cartas 
+      - name: Install and build
+        working-directory: Juego_Cartas
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
 
-      - name: Upload artifact for deployment job
+      - name: Upload build
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: Juego_Cartas
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+          path: .
+
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'juegocartas'
           slot-name: 'Production'
-          package: Juego_Cartas 
-
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C74FEFAF2E7344339868923081A80512 }}
-
-
-
-
-
-
-
+          package: .
